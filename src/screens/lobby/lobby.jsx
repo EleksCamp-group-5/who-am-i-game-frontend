@@ -58,7 +58,7 @@ function Lobby() {
                 )}
                 {playersWithoutCurrent.map((player) => (
                   <PlayerCard
-                    key={player.player.id}
+                    key={player.id}
                     avatarClassName={player.avatar}
                     name={player.nickname}
                     playerStatusClassName={

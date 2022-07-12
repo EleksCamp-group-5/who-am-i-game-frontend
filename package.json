@@ -78,5 +78,5 @@
     "jest": "^28.1.1",
     "prettier": "^2.6.2"
   },
-  "proxy": "https://who-am-i-group4-front.herokuapp.com/"
+  "proxy": "https://group-5-who-am-i.herokuapp.com/"
 }
