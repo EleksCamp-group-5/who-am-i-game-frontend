@@ -3,7 +3,7 @@ import Btn from '../../components/btn/btn';
 import Timer from '../../components/timer/timer';
 import LeaveGameModal from '../../components/modals/leave-game';
 import ScreenWrapper from '../../components/wrappers/screen-wrapper/screen-wrapper';
-import { useState, useContext } from 'react';
+import { useState, useContext, useMemo } from 'react';
 import GameDataContext from '../../contexts/game-data-context';
 import './loading.scss';
 import useGameData from '../../hooks/useGameData';
@@ -14,6 +14,8 @@ function Loading() {
 
   useGameData();
 
+  const timer = useMemo(() => <Timer />, []);
+
   return (
     <ScreenWrapper>
       <GameTitle />
@@ -23,7 +25,7 @@ function Loading() {
       <h3 className="loading__waiting-message">
         PLEASE WAIT UNTIL WE FIND YOUR OPPONENTS
       </h3>
-      <Timer />
+      {timer}
       <div className="loading__button-wrappper">
         <Btn
           className={['btn-pink-solid']}

@@ -1,19 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import convertTime from '../../helper-functions/convert-time';
 import './timer.scss';
+import useTimer from '../../hooks/useTimer';
 
 function Timer({ time = 0 }) {
   const [seconds, setSeconds] = useState(time);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSeconds(seconds + 1);
-    }, 1000);
-
-    return function cleanup() {
-      clearTimeout(timer);
-    };
-  });
+  useTimer(() => setSeconds((seconds) => seconds + 1));
 
   return (
     <div className="timer">
