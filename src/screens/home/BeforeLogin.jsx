@@ -1,15 +1,14 @@
 import Btn from '../../components/btn/btn';
 import { CREATE_ACCOUNT, SIGN_IN } from '../../constants/constants';
 import { useNavigate } from 'react-router-dom';
+import PlayQuickGameButton from './PlayQuickGameButton';
 
-function BeforeLogin({ setIsLogin, createGame }) {
+function BeforeLogin({ setIsLogin }) {
   const navigate = useNavigate();
 
   return (
     <>
-      <Btn className={'btn-blue-outline'} onClick={createGame}>
-        PLAY QUICK GAME
-      </Btn>
+      <PlayQuickGameButton />
       <div className="dividing-line"></div>
       <Btn
         className={'btn-blue-outline'}

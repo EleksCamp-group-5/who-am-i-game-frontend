@@ -1,7 +1,7 @@
 import Btn from '../../components/btn/btn';
-import { createGame } from '../../services/games-service';
 import { MAIN_LOBBY, PROFILE } from '../../constants/constants';
 import { useNavigate } from 'react-router-dom';
+import PlayQuickGameButton from './PlayQuickGameButton';
 
 function AfterLogin({ setIsLogin }) {
   const navigate = useNavigate();
@@ -16,9 +16,7 @@ function AfterLogin({ setIsLogin }) {
           <div className="profile__edit-icon"></div>
         </div>
       </div>
-      <Btn className={'btn-blue-outline'} onClick={createGame}>
-        PLAY QUICK GAME
-      </Btn>
+      <PlayQuickGameButton />
       <Btn
         className={'btn-blue-outline'}
         onClick={() => {
