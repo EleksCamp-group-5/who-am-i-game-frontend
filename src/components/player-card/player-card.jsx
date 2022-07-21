@@ -22,6 +22,7 @@ function PlayerCard({
   assignedCharacter,
   isYou,
   lobbyOwner,
+  active,
 }) {
   return (
     <div className="player">
@@ -31,7 +32,13 @@ function PlayerCard({
         {isYou && <div className="player__you-label">THIS IS YOU</div>}
         {lobbyOwner && <div className="player__you-label">LOBBY OWNER</div>}
         {assignedCharacter && (
-          <div className="player__assigned-character">{assignedCharacter}</div>
+          <div
+            className={clsx('player__assigned-character ', {
+              'player__assigned-character_active': active,
+            })}
+          >
+            {assignedCharacter}
+          </div>
         )}
       </div>
       <div className={clsx('player__status', playerStatusClassName)}></div>

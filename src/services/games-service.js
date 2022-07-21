@@ -66,7 +66,18 @@ function askQuestion(player, id, message) {
   });
 }
 
-function submitGuess(player, id, guess) {
+function answerQuestion(player, id, answer) {
+  return axios({
+    method: 'post',
+    url: `/api/v1/games/${id}/answer`,
+    headers: { 'X-Player': player },
+    params: {
+      answer,
+    },
+  });
+}
+
+function askGuess(player, id, guess) {
   return axios({
     method: 'post',
     url: `/api/v1/games/${id}/guess`,
@@ -77,13 +88,13 @@ function submitGuess(player, id, guess) {
   });
 }
 
-function answerQuestion(player, id, question) {
+function answerGuess(player, id, answer) {
   return axios({
     method: 'post',
-    url: `/api/v1/games/${id}/answer`,
+    url: `/api/v1/games/${id}/guess/answer`,
     headers: { 'X-Player': player },
-    data: {
-      message: question,
+    params: {
+      answer,
     },
   });
 }
@@ -96,6 +107,21 @@ function leaveGame(player, id) {
   });
 }
 
+function getHistory(id) {
+  return axios({
+    method: 'get',
+    url: `/api/v1/games/${id}/history`,
+  });
+}
+
+function inactivePlayer(player, id) {
+  return axios({
+    method: 'post',
+    url: `/api/v1/games/${id}/inactivePlayer`,
+    headers: { 'X-Player': player },
+  });
+}
+
 export {
   findGameById,
   findAvailableGames,
@@ -103,8 +129,11 @@ export {
   suggestCharacter,
   findTurnInfo,
   askQuestion,
-  submitGuess,
+  askGuess,
   answerQuestion,
   getAllPlayersCount,
   leaveGame,
+  getHistory,
+  inactivePlayer,
+  answerGuess,
 };

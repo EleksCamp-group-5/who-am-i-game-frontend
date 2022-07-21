@@ -2,12 +2,11 @@ import GameDataContext from '../../contexts/game-data-context';
 import { useContext } from 'react';
 import './modal.scss';
 import Btn from '../btn/btn';
-import { leaveGame } from '../../services/games-service';
-import { useNavigate } from 'react-router-dom';
 import ModalWrapper from './modal-wrapper';
+import { useNavigate } from 'react-router-dom';
 
 function LeaveGameModal({ active, onCancel }) {
-  const { gameData, playerId, resetData } = useContext(GameDataContext);
+  const { leaveGame } = useContext(GameDataContext);
   const navigate = useNavigate();
 
   if (!active) {
@@ -16,13 +15,8 @@ function LeaveGameModal({ active, onCancel }) {
 
   const submitLeaveGame = async (event) => {
     event.preventDefault();
-    try {
-      await leaveGame(playerId, gameData.id);
-      resetData();
-      navigate('/');
-    } catch (error) {
-      //to do: handle errors
-    }
+    await leaveGame();
+    navigate('/');
   };
 
   return (

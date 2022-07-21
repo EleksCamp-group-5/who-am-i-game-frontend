@@ -1,11 +1,32 @@
+import { useCallback } from 'react';
 import { useState } from 'react';
 import Btn from '../btn/btn';
 import ModalWrapper from './modal-wrapper';
 import './modal.scss';
 
-function SelectCharacterModal({ player, active, onCancel, onSubmit }) {
+function SelectCharacterModal({
+  player,
+  active,
+  onCancel,
+  onSubmit: onSubmitProp,
+}) {
   const [playerName, setPlayerName] = useState(player);
   const [characterName, setCharacterName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+      setSubmitting(true);
+      try {
+        await onSubmitProp(playerName, characterName);
+      } catch {
+        // todo: handle errors
+      }
+      setSubmitting(false);
+    },
+    [characterName, onSubmitProp, playerName]
+  );
 
   if (!active) {
     return null;
@@ -39,6 +60,7 @@ function SelectCharacterModal({ player, active, onCancel, onSubmit }) {
         <Btn
           className="btn-green-solid"
           disabled={
+            submitting ||
             (playerName && playerName.trim().length < 3) ||
             characterName.trim().length < 3
           }

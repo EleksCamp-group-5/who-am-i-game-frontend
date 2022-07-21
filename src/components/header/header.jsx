@@ -6,10 +6,14 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import './header.scss';
 import CreateNewLobbyModal from '../modals/create-new-lobby';
-import { GAME_LOBBY } from '../../constants/constants';
+import { GAME_LOBBY, INACTIVE } from '../../constants/constants';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import GameDataContext from '../../contexts/game-data-context';
+import { useCallback } from 'react';
 
 function Header({ type, lobby, startGame }) {
+  const { leaveGame } = useContext(GameDataContext);
   const [leaveModalActive, setLeaveModalActive] = useState(false);
   const [createModalActive, setCreateModalActive] = useState(false);
   const navigate = useNavigate();
@@ -19,6 +23,11 @@ function Header({ type, lobby, startGame }) {
     setCreateModalActive(false);
     navigate(GAME_LOBBY);
   };
+
+  const onTimerFinish = useCallback(async () => {
+    await leaveGame();
+    navigate(INACTIVE);
+  }, [leaveGame, navigate]);
 
   return (
     <header className="game-header">
@@ -30,6 +39,7 @@ function Header({ type, lobby, startGame }) {
             <CountdownTimer
               inLobby={clsx({ 'in-lobby': type === 'game-lobby' })}
               time={120}
+              onFinish={onTimerFinish}
             />
           </div>
         </>

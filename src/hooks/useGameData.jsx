@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,33 +8,25 @@ import {
   PROCESSING_QUESTION,
   SUGGESTING_CHARACTERS,
   WAITING_FOR_PLAYERS,
+  VICTORY,
+  DEFEAT,
 } from '../constants/constants';
 import GameDataContext from '../contexts/game-data-context';
-import { findGameById } from '../services/games-service';
 
 export default function useGameData() {
-  const { gameData, setGameData, resetData, playerId } =
+  const { gameData, resetData, playerId, fetchGame } =
     useContext(GameDataContext);
   const navigate = useNavigate();
+  const promiseRef = useRef();
 
   useEffect(() => {
-    const checkStatus = setTimeout(async () => {
-      const gameId = gameData.id || sessionStorage.getItem('gameId');
-      const userId = playerId || sessionStorage.getItem('playerId');
+    if (promiseRef.current && promiseRef.current.state === 'pending') {
+      return;
+    }
 
-      if (gameId && userId) {
-        try {
-          const { data } = await findGameById(userId, gameId);
-
-          if (data.players.length) setGameData(data);
-        } catch (error) {
-          if (error.response.status === 404) {
-            resetData();
-            navigate('/');
-          }
-        }
-      }
-    }, 1000);
+    const checkStatus = setTimeout(function () {
+      promiseRef.current = fetchGame();
+    }, 2000);
 
     return () => clearTimeout(checkStatus);
   });
@@ -42,6 +35,18 @@ export default function useGameData() {
     if (!gameData.id && !sessionStorage.gameId) {
       resetData();
       navigate('/');
+
+      return;
+    }
+
+    if (gameData.winners.length) {
+      const [winner] = gameData.winners;
+
+      if (winner.id === playerId) {
+        navigate(VICTORY);
+      } else {
+        navigate(DEFEAT);
+      }
 
       return;
     }

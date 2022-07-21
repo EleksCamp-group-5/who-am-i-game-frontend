@@ -45,6 +45,12 @@
   &__assigned-character {
     background-color: $modals-background;
     color: $secondary-background-blue;
+    text-transform: uppercase;
+
+    &_active {
+      background-color: $btn-green;
+      color: $font-black;
+    }
   }
 
   &__card-avatar {

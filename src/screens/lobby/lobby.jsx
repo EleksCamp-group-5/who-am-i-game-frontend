@@ -5,8 +5,7 @@ import SelectCharacterModal from '../../components/modals/select-character';
 import Header from '../../components/header/header';
 import ScreenWrapper from '../../components/wrappers/screen-wrapper/screen-wrapper';
 import Spinner from '@atlaskit/spinner';
-import { useContext, useState } from 'react';
-import { READY } from '../../constants/constants';
+import { useCallback, useContext, useState } from 'react';
 import './lobby.scss';
 import GameDataContext from '../../contexts/game-data-context';
 import { suggestCharacter } from '../../services/games-service';
@@ -22,9 +21,8 @@ function Lobby() {
   useGameData();
   const { currentPlayer, playersWithoutCurrent } = usePlayers();
 
-  const submitCharacter = async (event, playerName, characterName) => {
-    event.preventDefault();
-    try {
+  const submitCharacter = useCallback(
+    async (playerName, characterName) => {
       await suggestCharacter(
         playerId,
         gameData.id,
@@ -33,10 +31,9 @@ function Lobby() {
       );
       setSuggestModalActive(false);
       setSuggestBtn(false);
-    } catch (error) {
-      //to do: handle errors
-    }
-  };
+    },
+    [playerId, gameData.id]
+  );
 
   return (
     <ScreenWrapper>
@@ -51,7 +48,7 @@ function Lobby() {
                     avatarClassName={currentPlayer.avatar}
                     name={currentPlayer.nickname}
                     playerStatusClassName={
-                      currentPlayer.state === READY ? 'yes' : 'unsure'
+                      currentPlayer.suggestStatus ? 'yes' : 'unsure'
                     }
                     isYou
                   />
@@ -62,7 +59,7 @@ function Lobby() {
                     avatarClassName={player.avatar}
                     name={player.nickname}
                     playerStatusClassName={
-                      player.state === READY ? 'yes' : 'unsure'
+                      player.suggestStatus ? 'yes' : 'unsure'
                     }
                   />
                 ))}

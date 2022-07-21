@@ -2,10 +2,29 @@ import CountdownTimer from '../timer/timer-countdown/timer-countdown';
 import PlayerCard from '../player-card/player-card';
 import ModalContext from '../../contexts/modal-context';
 import './users-container.scss';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
+import { useEffect } from 'react';
 
-function UsersContainer({ mode, currentPlayer, players }) {
+function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
   const modalActive = useContext(ModalContext)[0];
+  const mode = playerTurn.playerState;
+  const [time, setTime] = useState(60);
+
+  useEffect(() => {
+    if (playerTurn.enteredQuestion) {
+      setTime(20);
+
+      return;
+    }
+
+    if (!playerTurn.enteredQuestion || players.every((p) => p.enteredAnswer)) {
+      setTime(60);
+
+      return;
+    }
+
+    setTime(60);
+  }, [currentPlayer.enteredAnswer, mode, playerTurn.enteredQuestion, players]);
 
   return (
     <div className="users">
@@ -13,8 +32,9 @@ function UsersContainer({ mode, currentPlayer, players }) {
         <p className="users__turn">TURN TIME</p>
         <CountdownTimer
           small={'v-small'}
-          time={mode === 'guess' || mode === 'answer' ? 20 : 60}
+          time={time}
           paused={modalActive}
+          onFinish={onTimerFinish}
         />
       </div>
       {currentPlayer && (
@@ -22,24 +42,26 @@ function UsersContainer({ mode, currentPlayer, players }) {
           className="in-users-container"
           avatarClassName={currentPlayer.avatar}
           name={currentPlayer.name}
-          isYou
+          assignedCharacter="This is you"
+          active={currentPlayer.id === playerTurn?.id}
+          playerStatusClassName={currentPlayer.character ? 'yes' : null}
         />
       )}
       <hr />
       <div className="users__list">
-        {players ? (
-          players.map((player) => (
-            <PlayerCard
-              className="in-users-container"
-              key={player.id}
-              name={player.name}
-              avatarClassName={player.avatar}
-              assignedCharacter={player.character}
-            />
-          ))
-        ) : (
-          <h1>Something went wrong</h1>
-        )}
+        {players
+          ? players.map((player, index) => (
+              <PlayerCard
+                className="in-users-container"
+                key={player.id}
+                name={player.name}
+                avatarClassName={player.avatar}
+                assignedCharacter={player.character}
+                active={player.id === playerTurn?.id}
+                playerStatusClassName={currentPlayer.character ? 'yes' : null}
+              />
+            ))
+          : null}
       </div>
     </div>
   );

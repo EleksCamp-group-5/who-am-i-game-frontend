@@ -9,7 +9,7 @@ import Lobby from './screens/lobby/lobby';
 import GameDataContext from './contexts/game-data-context';
 import MainLobby from './screens/main-lobby/main-lobby';
 import { v4 as uuidv4 } from 'uuid';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.scss';
 import {
   DEFEAT,
@@ -32,26 +32,88 @@ import RestorePassword from './screens/restore-password/restore-password';
 import NewPassword from './screens/new-password/new-password';
 import GameLobby from './screens/game-lobby/game-lobby';
 import ProfilePage from './screens/profile-page/profile-page';
+import {
+  findGameById,
+  leaveGame as submitLeaveGame,
+} from './services/games-service';
+import { useNavigate } from 'react-router-dom';
+
+const initialData = { status: null, players: [], winners: [], playersById: {} };
 
 function App() {
-  const [gameData, setGameData] = useState({ status: null, players: [] });
+  const [gameData, setGameData] = useState(initialData);
   const [playerId, setPlayerId] = useState(sessionStorage.playerId || uuidv4());
+  const navigate = useNavigate();
 
   useEffect(() => {
     sessionStorage.setItem('playerId', playerId);
   }, [playerId]);
 
-  function resetData() {
-    setGameData({ status: null, players: [] });
+  const resetData = useCallback(() => {
+    setGameData(initialData);
     sessionStorage.removeItem('gameId');
     sessionStorage.removeItem('playerId');
     setPlayerId(uuidv4());
-  }
+  }, []);
+
+  const fetchGame = useCallback(async () => {
+    const gameId = gameData.id || sessionStorage.getItem('gameId');
+    const userId = playerId || sessionStorage.getItem('playerId');
+
+    if (gameId && userId) {
+      try {
+        const { data } = await findGameById(userId, gameId);
+
+        if (data.players.length) {
+          const players = data.players.map((player, index) => ({
+            ...player,
+            avatar: `avatar0${index + 1}`,
+          }));
+          const playersById = players.reduce((all, player) => {
+            return {
+              ...all,
+              [player.id]: player,
+            };
+          }, {});
+          setGameData((oldData) => ({
+            ...data,
+            players,
+            playersById: { ...oldData.playersById, ...playersById },
+          }));
+        }
+      } catch (error) {
+        if (error.response.status === 404) {
+          resetData();
+          navigate('/');
+        }
+      }
+    }
+  }, [gameData.id, navigate, playerId, resetData]);
+
+  const leaveGame = useCallback(async () => {
+    if (!gameData.id) {
+      return;
+    }
+    try {
+      await submitLeaveGame(playerId, gameData.id);
+      resetData();
+    } catch (error) {
+      //to do: handle errors
+    }
+  }, [gameData.id, playerId, resetData]);
 
   return (
     <div className="App">
       <GameDataContext.Provider
-        value={{ gameData, setGameData, playerId, setPlayerId, resetData }}
+        value={{
+          gameData,
+          setGameData,
+          playerId,
+          setPlayerId,
+          resetData,
+          fetchGame,
+          leaveGame,
+        }}
       >
         <Routes>
           <Route path="/" element={<Homepage />} />

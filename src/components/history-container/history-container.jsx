@@ -1,27 +1,39 @@
 import HistoryItem from '../history-item/history-item';
 import QuestionForm from '../question-form/question-form';
-import { useEffect, useRef, useState } from 'react';
-import { users, history } from '../../store/mock-data';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import AnswerForm from '../answer-form/answer-form';
 import MessageBlock from '../message-block/message-block';
 import './history-container.scss';
-import { answerQuestion, askQuestion } from '../../services/games-service';
+import {
+  answerQuestion,
+  askQuestion,
+  getHistory,
+  answerGuess,
+} from '../../services/games-service';
 import {
   ANSWERING,
   ASKING,
   GUESSING,
+  NO,
   RESPONSE,
   WAITING,
 } from '../../constants/constants';
 import { useContext } from 'react';
 import GameDataContext from '../../contexts/game-data-context';
+import { useCallback } from 'react';
 
-function HistoryContainer({ mode, currentPlayer }) {
-  const { gameData, playerId } = useContext(GameDataContext);
-  const [message, setMessage] = useState('yes');
-  const [currentQuestion, setCurrentQuestion] = useState('');
-  const [disabled, setDisabled] = useState(false);
+function HistoryContainer({ currentPlayer, players, playerTurn }) {
+  const { gameData, playerId, fetchGame } = useContext(GameDataContext);
   const bottomElement = useRef(null);
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const mode = currentPlayer.playerState;
+  const playersByIds = gameData.playersById;
+
+  const allPlayers = useMemo(
+    () => Object.values(gameData.playersById),
+    [gameData.playersById]
+  );
 
   useEffect(() => {
     const listBottom = bottomElement.current;
@@ -32,53 +44,136 @@ function HistoryContainer({ mode, currentPlayer }) {
       behavior: 'auto',
       block: 'end',
     });
-  });
+  }, [history.length]);
 
-  const sendQuestionHandler = async () => {
-    if (currentQuestion !== '') {
-      history.push({ user: currentPlayer, question: currentQuestion });
+  const fetchHistory = useCallback(
+    async function () {
+      if (!gameData.id) {
+        return;
+      }
+      const { data } = await getHistory(gameData.id);
+      setHistory(data.questions);
+    },
+    [gameData.id]
+  );
+
+  useEffect(() => {
+    fetchHistory();
+  }, [
+    playerTurn?.id,
+    fetchHistory,
+    playerTurn?.playerQuestion,
+    currentPlayer.playerAnswer,
+  ]);
+
+  const lastHistoryItemAnswersLength = useMemo(
+    () => history[history.length - 1]?.answers.length ?? 0,
+    [history]
+  );
+  const answersLength = useMemo(
+    () =>
+      players.reduce((all, player) => {
+        if (player.enteredAnswer) {
+          return all + 1;
+        }
+
+        return all;
+      }, 0),
+    [players]
+  );
+
+  useEffect(() => {
+    if (lastHistoryItemAnswersLength !== answersLength) {
+      fetchHistory();
+    }
+  }, [lastHistoryItemAnswersLength, answersLength, fetchHistory]);
+
+  const submitAsk = useCallback(
+    async (question) => {
+      setLoading(true);
       try {
-        await askQuestion(playerId, gameData.id, currentQuestion);
-        setCurrentQuestion('');
-        setDisabled(true);
+        await askQuestion(playerId, gameData.id, question);
+        await fetchGame();
       } catch (error) {
         //to do: handle error
       }
-    }
-  };
+      setLoading(false);
+    },
+    [fetchGame, gameData.id, playerId]
+  );
 
-  const handleClick = async (event) => {
-    event.preventDefault();
-    const answer = event.nativeEvent.submitter.value;
-    setMessage(answer);
-    try {
-      await answerQuestion(playerId, gameData.id, answer);
-    } catch (error) {
-      //to do: handle error
-    }
-  };
+  const submitAnswer = useCallback(
+    async (answer) => {
+      setLoading(true);
+      try {
+        await answerQuestion(playerId, gameData.id, answer);
+        await fetchGame();
+      } catch (error) {
+        //to do: handle error
+      }
+      setLoading(false);
+    },
+    [fetchGame, gameData.id, playerId]
+  );
+
+  const submitAnswerGuess = useCallback(
+    async (answer) => {
+      setLoading(true);
+      try {
+        await answerGuess(playerId, gameData.id, answer);
+        await fetchGame();
+      } catch (error) {
+        //to do: handle error
+      }
+      setLoading(false);
+    },
+    [fetchGame, gameData.id, playerId]
+  );
 
   return (
     <div className="history">
       <div className="history_list">
-        {history.map((item, index) => (
-          <HistoryItem users={users} question={item} key={index} />
-        ))}
+        {history.map((item, index) =>
+          playersByIds[item.player] ? (
+            <HistoryItem
+              question={item}
+              key={index}
+              user={playersByIds[item.player]}
+              users={allPlayers}
+            />
+          ) : null
+        )}
         <div className="list_scroll_bottom" ref={bottomElement}></div>
       </div>
-      {mode === ASKING && !disabled && (
-        <QuestionForm
-          setCurrentQuestion={setCurrentQuestion}
-          currentQuestion={currentQuestion}
-          sendQuestion={sendQuestionHandler}
-        />
-      )}
-      {(mode === ANSWERING || mode === GUESSING) && (
-        <AnswerForm mode={mode} onClick={handleClick} />
-      )}
-      {(mode === RESPONSE || mode === WAITING) && (
-        <MessageBlock mode={mode} message={message} />
-      )}
+      <div className="history_bottom">
+        {mode === ASKING &&
+          (!playerTurn.enteredQuestion ||
+            players.every((p) => p.enteredAnswer)) && (
+            <QuestionForm onSubmit={submitAsk} disabled={loading} />
+          )}
+        {mode === ANSWERING &&
+          !currentPlayer.enteredAnswer &&
+          !currentPlayer.enteredQuestion &&
+          playerTurn.enteredQuestion && (
+            <AnswerForm
+              mode={playerTurn.playerState === GUESSING ? GUESSING : mode}
+              onSubmit={
+                playerTurn.playerState === GUESSING
+                  ? submitAnswerGuess
+                  : submitAnswer
+              }
+              disabled={loading}
+            />
+          )}
+        {mode === ANSWERING &&
+          currentPlayer.enteredAnswer &&
+          !currentPlayer.enteredQuestion && (
+            <MessageBlock mode={WAITING} message={currentPlayer.playerAnswer} />
+          )}
+        {mode === ANSWERING && currentPlayer.enteredQuestion && (
+          <MessageBlock mode={RESPONSE} message={NO} />
+        )}
+      </div>
     </div>
   );
 }

@@ -2,37 +2,41 @@ import ModalContext from '../../contexts/modal-context';
 import Btn from '../btn/btn';
 import { useContext } from 'react';
 import './question-form.scss';
+import { useCallback } from 'react';
 
-function QuestionForm({ setCurrentQuestion, currentQuestion, sendQuestion }) {
+function QuestionForm({ disabled, onSubmit }) {
   const setModalActive = useContext(ModalContext)[1];
 
-  const handleChange = (event) => {
-    setCurrentQuestion(event.target.value);
-  };
+  const handleSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
 
-  const handleKeyDown = (event) => {
-    if (event.code === 'Enter') {
-      sendQuestion();
-    }
-  };
+      if (event.target.elements.question.value) {
+        onSubmit(event.target.elements.question.value);
+      }
+    },
+    [onSubmit]
+  );
 
   return (
     <div className="form">
-      <div className="row">
+      <form className="row" onSubmit={handleSubmit}>
         <input
+          name="question"
           className="input_field"
           type="text"
           placeholder="Type your question"
           maxLength="256"
-          value={currentQuestion}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
         />
-        <button className="btn btn_ask" onClick={sendQuestion}>
+        <button disabled={disabled} type="submit" className="btn btn_ask">
           Ask
         </button>
-      </div>
-      <Btn className="btn-yellow-solid" onClick={() => setModalActive(true)}>
+      </form>
+      <Btn
+        disabled={disabled}
+        className="btn-yellow-solid"
+        onClick={() => setModalActive(true)}
+      >
         I AM READY TO GUESS
       </Btn>
     </div>
