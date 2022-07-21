@@ -39,14 +39,18 @@ export default function useGameData() {
       return;
     }
 
-    if (gameData.winners.length) {
-      const [winner] = gameData.winners;
+    if (gameData.winners.some((p) => p.id === playerId)) {
+      navigate(VICTORY);
 
-      if (winner.id === playerId) {
-        navigate(VICTORY);
-      } else {
-        navigate(DEFEAT);
-      }
+      return;
+    }
+
+    if (
+      gameData.status === PROCESSING_QUESTION &&
+      gameData.players.length === 1 &&
+      playerId === gameData.players[0].id
+    ) {
+      navigate(DEFEAT);
 
       return;
     }

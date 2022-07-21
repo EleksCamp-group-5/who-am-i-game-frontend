@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import AnswerIcon from '../answer-icon/answer-icon';
 import './history-item.scss';
 
-function HistoryItem({ question, users, user }) {
+function HistoryItem({ question, users, user, last }) {
   const { answers } = question;
 
   const [guess, message] = useMemo(() => {
@@ -34,7 +34,7 @@ function HistoryItem({ question, users, user }) {
       </div>
       <div className="history-item__icons-box">
         {users
-          .filter((u) => user.id !== u.id)
+          .filter((u) => (last ? user.id !== u.id : answersByUserId[u.id]))
           .map((user) => (
             <AnswerIcon
               key={user.id}

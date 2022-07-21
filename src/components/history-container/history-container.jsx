@@ -133,16 +133,22 @@ function HistoryContainer({ currentPlayer, players, playerTurn }) {
   return (
     <div className="history">
       <div className="history_list">
-        {history.map((item, index) =>
-          playersByIds[item.player] ? (
+        {history.map((item, index) => {
+          if (!playersByIds[item.player]) {
+            return null;
+          }
+          const last = history.length - 1 === index;
+
+          return (
             <HistoryItem
               question={item}
               key={index}
               user={playersByIds[item.player]}
-              users={allPlayers}
+              users={last ? gameData.players : allPlayers}
+              last={last}
             />
-          ) : null
-        )}
+          );
+        })}
         <div className="list_scroll_bottom" ref={bottomElement}></div>
       </div>
       <div className="history_bottom">
