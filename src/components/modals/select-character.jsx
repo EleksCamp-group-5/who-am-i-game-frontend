@@ -41,6 +41,7 @@ function SelectCharacterModal({
         <input
           className="modal__input-field"
           type="text"
+          minLength="2"
           maxLength="50"
           value={playerName}
           onInput={(e) => {
@@ -51,6 +52,7 @@ function SelectCharacterModal({
           className="modal__input-field"
           type="text"
           placeholder="Suggest a character"
+          minLength="2"
           maxLength="50"
           value={characterName}
           onInput={(e) => {
@@ -61,8 +63,8 @@ function SelectCharacterModal({
           className="btn-green-solid"
           disabled={
             submitting ||
-            (playerName && playerName.trim().length < 3) ||
-            characterName.trim().length < 3
+            (playerName && playerName.trim().length < 2) ||
+            characterName.trim().length < 2
           }
           type="submit"
         >
