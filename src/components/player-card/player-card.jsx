@@ -27,7 +27,11 @@ function PlayerCard({
   return (
     <div className="player">
       <div className={clsx('player__card', className)}>
-        <div className={clsx('player__card-avatar', avatarClassName)}></div>
+        <div
+          className={clsx('player__card-avatar', avatarClassName, {
+            'player__card-avatar_active': active,
+          })}
+        ></div>
         <div className="player__card-name">{name}</div>
         {isYou && <div className="player__you-label">THIS IS YOU</div>}
         {lobbyOwner && <div className="player__you-label">LOBBY OWNER</div>}

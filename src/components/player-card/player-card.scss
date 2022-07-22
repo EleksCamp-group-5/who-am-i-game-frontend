@@ -58,6 +58,12 @@
     height: 48px;
     border-radius: 50%;
     margin-right: 16px;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    &_active {
+      border: 8px solid $btn-green;
+    }
   }
 
   &__status {
