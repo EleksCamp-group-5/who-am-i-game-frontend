@@ -37,6 +37,7 @@ import {
   leaveGame as submitLeaveGame,
 } from './services/games-service';
 import { useNavigate } from 'react-router-dom';
+import keyBy from 'lodash/keyBy';
 
 const initialData = { status: null, players: [], winners: [], playersById: {} };
 
@@ -69,12 +70,7 @@ function App() {
             ...player,
             avatar: `avatar0${index + 1}`,
           }));
-          const playersById = players.reduce((all, player) => {
-            return {
-              ...all,
-              [player.id]: player,
-            };
-          }, {});
+          const playersById = keyBy(players, 'id');
           setGameData((oldData) => ({
             ...data,
             players,
