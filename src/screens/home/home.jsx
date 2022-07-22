@@ -13,7 +13,7 @@ function Homepage() {
 
   useEffect(() => {
     leaveGame();
-  }, []);
+  }, [leaveGame]);
 
   return (
     <ScreenWrapper>
