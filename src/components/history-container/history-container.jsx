@@ -21,6 +21,7 @@ import {
 import { useContext } from 'react';
 import GameDataContext from '../../contexts/game-data-context';
 import { useCallback } from 'react';
+import debounce from 'lodash/debounce';
 
 function HistoryContainer({ currentPlayer, players, playerTurn }) {
   const { gameData, playerId, fetchGame } = useContext(GameDataContext);
@@ -46,14 +47,15 @@ function HistoryContainer({ currentPlayer, players, playerTurn }) {
     });
   }, [history.length]);
 
-  const fetchHistory = useCallback(
-    async function () {
-      if (!gameData.id) {
-        return;
-      }
-      const { data } = await getHistory(gameData.id);
-      setHistory(data.questions);
-    },
+  const fetchHistory = useMemo(
+    () =>
+      debounce(async function () {
+        if (!gameData.id) {
+          return;
+        }
+        const { data } = await getHistory(gameData.id);
+        setHistory(data.questions);
+      }, 200),
     [gameData.id]
   );
 
