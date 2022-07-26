@@ -7944,6 +7944,11 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
+promise-status-async@^1.2.10:
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/promise-status-async/-/promise-status-async-1.2.10.tgz#59bae260d4889d037313f4395162f038ffd7c22a"
+  integrity sha512-MECA3pc+uWN+D6IiATrNVzXtBU6WrsKvWmxS9Syd6d14roJqfEpxh/1Ocr4lpWqZ4zorxXJ+bqMTTrqqZ302yg==
+
 promise@^8.1.0:
   version "8.1.0"
   resolved "https://registry.npmjs.org/promise/-/promise-8.1.0.tgz"

@@ -16,7 +16,6 @@ function Lobby() {
   const { gameData, playerId } = useContext(GameDataContext);
   const [leaveModalActive, setLeaveModalActive] = useState(false);
   const [suggestModalActive, setSuggestModalActive] = useState(false);
-  const [suggestBtn, setSuggestBtn] = useState(true);
 
   useGameData();
   const { currentPlayer, playersWithoutCurrent } = usePlayers();
@@ -30,7 +29,6 @@ function Lobby() {
         characterName.trim()
       );
       setSuggestModalActive(false);
-      setSuggestBtn(false);
     },
     [playerId, gameData.id]
   );

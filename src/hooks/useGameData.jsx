@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { useContext, useEffect } from 'react';
+import { useRef, useCallback, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LOADING,
@@ -12,6 +11,8 @@ import {
   DEFEAT,
 } from '../constants/constants';
 import GameDataContext from '../contexts/game-data-context';
+import { promiseStatus, PromiseStatuses } from 'promise-status-async';
+import useInterval from './useInterval';
 
 export default function useGameData() {
   const { gameData, resetData, playerId, fetchGame } =
@@ -19,17 +20,19 @@ export default function useGameData() {
   const navigate = useNavigate();
   const promiseRef = useRef();
 
-  useEffect(() => {
-    if (promiseRef.current && promiseRef.current.state === 'pending') {
+  const tickHandler = useCallback(async () => {
+    const status = await promiseStatus(promiseRef.current);
+
+    if (
+      status === PromiseStatuses.PROMISE_PENDING ||
+      status === PromiseStatuses.PROMISE_REJECTED
+    ) {
       return;
     }
 
-    const checkStatus = setTimeout(function () {
-      promiseRef.current = fetchGame();
-    }, 2000);
-
-    return () => clearTimeout(checkStatus);
-  });
+    promiseRef.current = fetchGame();
+  }, [fetchGame]);
+  useInterval(tickHandler, 1000);
 
   useEffect(() => {
     if (!gameData.id && !sessionStorage.gameId) {
