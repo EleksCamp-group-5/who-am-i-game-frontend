@@ -14,7 +14,10 @@ function InactivityKick() {
   return (
     <ScreenWrapper>
       <GameTitle />
-      <PlayerCard avatarClassName={'avatar01'} name={'BeanJean'} />
+      <PlayerCard
+        avatarClassName={sessionStorage.getItem('avatar')}
+        name={sessionStorage.getItem('name')}
+      />
       <h3 className="inactivity-kick-message">
         SORRY, YOU HAVE BEEN KICKED FROM THE GAME DUE TO INACTIVITY
       </h3>

@@ -32,7 +32,7 @@ export default function useGameData() {
 
     promiseRef.current = fetchGame();
   }, [fetchGame]);
-  useInterval(tickHandler, 1000);
+  useInterval(tickHandler, 1300);
 
   useEffect(() => {
     if (!gameData.id && !sessionStorage.gameId) {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useContext } from 'react';
 import { ASKING, GUESSING } from '../constants/constants';
 import GameDataContext from '../contexts/game-data-context';
@@ -5,7 +6,7 @@ import GameDataContext from '../contexts/game-data-context';
 export default function usePlayers() {
   const { gameData, playerId } = useContext(GameDataContext);
 
-  return gameData.players.reduce(
+  const playersData = gameData.players.reduce(
     (obj, player) => {
       if (player.playerState === ASKING || player.playerState === GUESSING) {
         obj.playerTurn = player;
@@ -23,4 +24,12 @@ export default function usePlayers() {
     },
     { byIds: gameData.playersById, playersWithoutCurrent: [] }
   );
+
+  const { currentPlayer } = playersData;
+  useEffect(() => {
+    sessionStorage.setItem('avatar', currentPlayer?.avatar);
+    sessionStorage.setItem('name', currentPlayer?.nickname);
+  }, [currentPlayer?.avatar, currentPlayer?.nickname]);
+
+  return playersData;
 }
