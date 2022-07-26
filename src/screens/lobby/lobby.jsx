@@ -43,16 +43,14 @@ function Lobby() {
             <Header type="game-lobby" />
             <div className="input-screen__player">
               <div className="input-screen__player-card-wrapper">
-                {currentPlayer && (
-                  <PlayerCard
-                    avatarClassName={currentPlayer.avatar}
-                    name={currentPlayer.nickname}
-                    playerStatusClassName={
-                      currentPlayer.suggestStatus ? 'yes' : 'unsure'
-                    }
-                    isYou
-                  />
-                )}
+                <PlayerCard
+                  avatarClassName={currentPlayer.avatar}
+                  name={currentPlayer.nickname}
+                  playerStatusClassName={
+                    currentPlayer.suggestStatus ? 'yes' : 'unsure'
+                  }
+                  isYou
+                />
                 {playersWithoutCurrent.map((player) => (
                   <PlayerCard
                     key={player.id}
@@ -65,7 +63,7 @@ function Lobby() {
                 ))}
               </div>
               <div className="input-screen__btn-wrapper">
-                {suggestBtn && currentPlayer && (
+                {!currentPlayer.suggestStatus && (
                   <Btn
                     className={['btn-green-solid']}
                     onClick={() => setSuggestModalActive(true)}

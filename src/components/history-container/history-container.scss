@@ -19,10 +19,6 @@
     align-items: stretch;
     gap: 32px;
     overflow-y: auto;
-
-    .history_item:not(:nth-last-child(2)) {
-      opacity: 50%;
-    }
   }
 
   &_bottom {

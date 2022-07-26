@@ -2,29 +2,18 @@ import CountdownTimer from '../timer/timer-countdown/timer-countdown';
 import PlayerCard from '../player-card/player-card';
 import ModalContext from '../../contexts/modal-context';
 import './users-container.scss';
-import { useContext, useState } from 'react';
-import { useEffect } from 'react';
+import { useContext, useMemo } from 'react';
 
 function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
   const modalActive = useContext(ModalContext)[0];
-  const mode = playerTurn.playerState;
-  const [time, setTime] = useState(60);
 
-  useEffect(() => {
-    if (playerTurn.enteredQuestion) {
-      setTime(20);
-
-      return;
-    }
-
-    if (!playerTurn.enteredQuestion || players.every((p) => p.enteredAnswer)) {
-      setTime(60);
-
-      return;
-    }
-
-    setTime(60);
-  }, [currentPlayer.enteredAnswer, mode, playerTurn.enteredQuestion, players]);
+  const isAnswering = useMemo(
+    () =>
+      playerTurn.enteredQuestion &&
+      !currentPlayer.enteredAnswer &&
+      players.some((p) => !p.enteredAnswer),
+    [currentPlayer.enteredAnswer, playerTurn.enteredQuestion, players]
+  );
 
   return (
     <div className="users">
@@ -32,16 +21,17 @@ function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
         <p className="users__turn">TURN TIME</p>
         <CountdownTimer
           small={'v-small'}
-          time={time}
+          time={isAnswering ? 20 : 60}
           paused={modalActive}
           onFinish={onTimerFinish}
+          reset={playerTurn.enteredQuestion}
         />
       </div>
       {currentPlayer && (
         <PlayerCard
           className="in-users-container"
           avatarClassName={currentPlayer.avatar}
-          name={currentPlayer.name}
+          name={currentPlayer.nickname}
           assignedCharacter="This is you"
           active={currentPlayer.id === playerTurn?.id}
           playerStatusClassName={currentPlayer.character ? 'yes' : null}
@@ -54,7 +44,7 @@ function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
               <PlayerCard
                 className="in-users-container"
                 key={player.id}
-                name={player.name}
+                name={player.nickname}
                 avatarClassName={player.avatar}
                 assignedCharacter={player.character}
                 active={player.id === playerTurn?.id}

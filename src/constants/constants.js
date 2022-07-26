@@ -12,8 +12,10 @@ const YES = 'YES';
 const NO = 'NO';
 const NOT_SURE = 'NOT_SURE';
 const GUESSING = 'GUESSING';
+const ANSWER_GUESS = 'ANSWER_GUESS';
 const WAITING = 'WAITING';
 const RESPONSE = 'RESPONSE';
+const DONT_KNOW = 'DONT_KNOW';
 
 const MAIN_LOBBY = '/main-lobby';
 const GAME_LOBBY = '/game-lobby';
@@ -83,4 +85,6 @@ export {
   NEW_PASSWORD,
   PROFILE,
   READY_TO_PLAY,
+  ANSWER_GUESS,
+  DONT_KNOW,
 };

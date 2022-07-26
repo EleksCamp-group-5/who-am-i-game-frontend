@@ -10,6 +10,10 @@
   background-color: $primary-background-blue;
   border-radius: 16px;
 
+  &:not(:nth-last-child(2)) {
+    opacity: 50%;
+  }
+
   &__question {
     font-style: normal;
     font-weight: 500;

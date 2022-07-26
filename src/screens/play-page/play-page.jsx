@@ -13,7 +13,13 @@ import useGameData from '../../hooks/useGameData';
 import usePlayers from '../../hooks/usePlayers';
 import { useNavigate } from 'react-router-dom';
 import { inactivePlayer } from '../../services/games-service';
-import { ANSWERING, ASKING, INACTIVE } from '../../constants/constants';
+import {
+  ANSWERING,
+  ANSWER_GUESS,
+  ASKING,
+  GUESSING,
+  INACTIVE,
+} from '../../constants/constants';
 
 function PlayPage() {
   const { gameData, playerId, resetData } = useContext(GameDataContext);
@@ -52,24 +58,28 @@ function PlayPage() {
 
   const onTimerFinish = useCallback(() => {
     if (
-      currentPlayer.playerState === ASKING &&
-      !currentPlayer.enteredQuestion
+      (currentPlayer?.playerState === ASKING ||
+        currentPlayer?.playerState === GUESSING) &&
+      currentPlayer?.enteredQuestion &&
+      playersWithoutCurrent.some((p) => !p.enteredAnswer)
     ) {
-      makePlayerInactive();
-
       return;
     }
 
     if (
-      currentPlayer.playerState === ANSWERING &&
-      !currentPlayer.enteredAnswer
+      (currentPlayer?.playerState === ANSWERING ||
+        currentPlayer?.playerState === ANSWER_GUESS) &&
+      (currentPlayer?.enteredAnswer || currentPlayer?.enteredQuestion)
     ) {
-      makePlayerInactive();
+      return;
     }
+
+    makePlayerInactive();
   }, [
     currentPlayer?.enteredAnswer,
     currentPlayer?.enteredQuestion,
     currentPlayer?.playerState,
+    playersWithoutCurrent,
     makePlayerInactive,
   ]);
 

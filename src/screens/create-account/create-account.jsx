@@ -47,7 +47,7 @@ function CreateAccount() {
           name="username"
           value={username}
           onChange={(e) => usernameHandler(e)}
-          placeholder="Username"
+          placeholder="Nickname"
         />
         <Input
           type="email"

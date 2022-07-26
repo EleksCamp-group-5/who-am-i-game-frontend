@@ -3,7 +3,7 @@ import { ReactComponent as Check } from '../../assets/svg/check-icon-btn.svg';
 import { ReactComponent as Question } from '../../assets/svg/question-icon-btn.svg';
 import { ReactComponent as Cross } from '../../assets/svg/cross-icon-btn.svg';
 import './answer-form.scss';
-import { ANSWERING, NO, NOT_SURE, YES } from '../../constants/constants';
+import { ANSWERING, DONT_KNOW, NO, YES } from '../../constants/constants';
 import { useCallback } from 'react';
 import clsx from 'clsx';
 
@@ -48,7 +48,7 @@ function AnswerForm({ disabled, mode, onSubmit }) {
           disabled={disabled}
           type="submit"
           className="btn-orange-solid btn-third"
-          value={NOT_SURE}
+          value={DONT_KNOW}
         >
           <Question fill="#1e1b18" />
           DON'T KNOW

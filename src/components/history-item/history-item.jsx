@@ -25,6 +25,14 @@ function HistoryItem({ question, users, user, last }) {
     }, {});
   }, [answers]);
 
+  const filteredUsers = useMemo(
+    () =>
+      users.filter((u) => (last ? user.id !== u.id : answersByUserId[u.id])),
+    [answersByUserId, last, user.id, users]
+  );
+
+  const allPlayersAnswered = answers.length >= filteredUsers.length;
+
   return (
     <div className="history-item">
       <div className={clsx('history-item__question', { guess })}>
@@ -33,15 +41,13 @@ function HistoryItem({ question, users, user, last }) {
         <p>{message}</p>
       </div>
       <div className="history-item__icons-box">
-        {users
-          .filter((u) => (last ? user.id !== u.id : answersByUserId[u.id]))
-          .map((user) => (
-            <AnswerIcon
-              key={user.id}
-              user={user}
-              status={answersByUserId[user.id]}
-            />
-          ))}
+        {filteredUsers.map((user) => (
+          <AnswerIcon
+            key={user.id}
+            user={user}
+            status={allPlayersAnswered ? answersByUserId[user.id] : null}
+          />
+        ))}
       </div>
     </div>
   );

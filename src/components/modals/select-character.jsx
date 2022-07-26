@@ -63,7 +63,9 @@ function SelectCharacterModal({
           className="btn-green-solid"
           disabled={
             submitting ||
-            (playerName && playerName.trim().length < 2) ||
+            !playerName ||
+            playerName.trim().length < 2 ||
+            !characterName ||
             characterName.trim().length < 2
           }
           type="submit"

@@ -1,6 +1,13 @@
 import HistoryItem from '../history-item/history-item';
 import QuestionForm from '../question-form/question-form';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+  useContext,
+} from 'react';
 import AnswerForm from '../answer-form/answer-form';
 import MessageBlock from '../message-block/message-block';
 import './history-container.scss';
@@ -12,15 +19,14 @@ import {
 } from '../../services/games-service';
 import {
   ANSWERING,
+  ANSWER_GUESS,
   ASKING,
   GUESSING,
   NO,
   RESPONSE,
   WAITING,
 } from '../../constants/constants';
-import { useContext } from 'react';
 import GameDataContext from '../../contexts/game-data-context';
-import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
 
 function HistoryContainer({ currentPlayer, players, playerTurn }) {
@@ -159,7 +165,7 @@ function HistoryContainer({ currentPlayer, players, playerTurn }) {
             players.every((p) => p.enteredAnswer)) && (
             <QuestionForm onSubmit={submitAsk} disabled={loading} />
           )}
-        {mode === ANSWERING &&
+        {(mode === ANSWERING || mode === ANSWER_GUESS) &&
           !currentPlayer.enteredAnswer &&
           !currentPlayer.enteredQuestion &&
           playerTurn.enteredQuestion && (
@@ -173,14 +179,15 @@ function HistoryContainer({ currentPlayer, players, playerTurn }) {
               disabled={loading}
             />
           )}
-        {mode === ANSWERING &&
+        {(mode === ANSWERING || mode === ANSWER_GUESS) &&
           currentPlayer.enteredAnswer &&
           !currentPlayer.enteredQuestion && (
             <MessageBlock mode={WAITING} message={currentPlayer.playerAnswer} />
           )}
-        {mode === ANSWERING && currentPlayer.enteredQuestion && (
-          <MessageBlock mode={RESPONSE} message={NO} />
-        )}
+        {(mode === ANSWERING || mode === ANSWER_GUESS) &&
+          currentPlayer.enteredQuestion && (
+            <MessageBlock mode={RESPONSE} message={NO} />
+          )}
       </div>
     </div>
   );
