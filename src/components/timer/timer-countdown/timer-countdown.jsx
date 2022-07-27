@@ -12,12 +12,46 @@ function CountdownTimer({
   paused,
   onFinish,
   reset,
+  disableSessionTracker,
 }) {
   const [seconds, setSeconds] = useState(time);
 
   useEffect(() => {
     setSeconds(time);
   }, [time, reset]);
+
+  useEffect(() => {
+    if (disableSessionTracker) {
+      return;
+    }
+    const sessionTimer = sessionStorage.getItem('timer');
+
+    if (sessionTimer) {
+      const { seconds, time } = JSON.parse(sessionTimer);
+      const diff = new Date().getTime() - time;
+      const result = seconds - Math.floor(diff / 1000);
+
+      setSeconds(result > 0 ? result : 0);
+      sessionStorage.removeItem('timer');
+    }
+
+    function onBeforeUnload(e) {
+      setSeconds((seconds) => {
+        sessionStorage.setItem(
+          'timer',
+          JSON.stringify({ seconds, time: new Date().getTime() })
+        );
+
+        return seconds;
+      });
+    }
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    };
+  }, [disableSessionTracker]);
 
   useTimer(() => {
     if (paused || seconds === 0) {

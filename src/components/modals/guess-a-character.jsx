@@ -45,6 +45,7 @@ function GuessCharacterModal({ active, onSubmit: onSubmitProp, onCancel }) {
             inLobby={'in-lobby'}
             small={'v-small'}
             onFinish={onTimerFinish}
+            disableSessionTracker
           />
         </div>
         <input
