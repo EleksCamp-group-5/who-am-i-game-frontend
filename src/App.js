@@ -85,6 +85,10 @@ function App() {
           resetData();
           navigate('/');
         }
+
+        if (error.code === 'ERR_NETWORK') {
+          throw error;
+        }
       }
     }
   }, [gameData.id, navigate, playerId, resetData]);

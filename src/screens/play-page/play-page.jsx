@@ -37,9 +37,10 @@ function PlayPage() {
         resetData();
         navigate(INACTIVE);
       }
-    } catch {
-      resetData();
-      navigate(INACTIVE);
+    } catch (error) {
+      if (error.code === 'ERR_NETWORK') {
+        throw error;
+      }
     }
   }, [playerId, gameData.id, resetData, navigate]);
 
