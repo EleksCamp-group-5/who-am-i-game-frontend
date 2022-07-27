@@ -1,16 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import CountdownTimer from '../timer/timer-countdown/timer-countdown';
 import Btn from '../btn/btn';
 import checkGuess from '../../helper-functions/check-guess.js';
 import './modal.scss';
 import ModalWrapper from './modal-wrapper';
 
-function GuessCharacterModal({ active, onSubmit, onCancel, onTimerFinish }) {
+function GuessCharacterModal({ active, onSubmit: onSubmitProp, onCancel }) {
   const [guess, setGuess] = useState('');
 
   useEffect(() => {
     return () => setGuess('');
   }, [active]);
+
+  const onSubmit = useCallback(
+    (event) => {
+      event.preventDefault();
+
+      if (onSubmitProp) {
+        onSubmitProp(guess);
+      }
+    },
+    [onSubmitProp, guess]
+  );
+
+  const onTimerFinish = useCallback(() => {
+    const isValid = !checkGuess(guess);
+
+    if (onSubmitProp && isValid) {
+      onSubmitProp(guess);
+    }
+  }, [onSubmitProp, guess]);
 
   if (!active) {
     return null;
@@ -18,7 +37,7 @@ function GuessCharacterModal({ active, onSubmit, onCancel, onTimerFinish }) {
 
   return (
     <ModalWrapper title="READY TO GUESS?" onCancel={onCancel}>
-      <form className="modal-form" onSubmit={(event) => onSubmit(event, guess)}>
+      <form className="modal-form" onSubmit={onSubmit}>
         <div className="modal__timer-container">
           <p className="modal__timer-container_name">TIME LEFT</p>
           <CountdownTimer

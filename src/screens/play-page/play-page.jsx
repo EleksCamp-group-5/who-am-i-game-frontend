@@ -44,8 +44,7 @@ function PlayPage() {
   }, [playerId, gameData.id, resetData, navigate]);
 
   const onSubmitGuess = useCallback(
-    async (event, guess) => {
-      event.preventDefault();
+    async (guess) => {
       try {
         await askGuess(playerId, gameData.id, guess);
         setActive(false);
@@ -105,7 +104,6 @@ function PlayPage() {
                 active={active}
                 onSubmit={onSubmitGuess}
                 onCancel={() => setActive(false)}
-                onTimerFinish={makePlayerInactive}
               />
             </ModalContext.Provider>
           </div>
