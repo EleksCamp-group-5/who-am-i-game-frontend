@@ -3,8 +3,10 @@ import GameTitle from '../../components/game-title/game-title';
 import Input from '../../components/Input/Input';
 import ScreenWrapper from '../../components/wrappers/screen-wrapper/screen-wrapper';
 import { useNavigate } from 'react-router-dom';
+import { REDIRECT } from '../../constants/constants';
 import { useState } from 'react';
 import './restore-password.scss';
+import { sendEmail } from '../../services/users-service';
 
 function RestorePassword() {
   const navigate = useNavigate();
@@ -16,9 +18,14 @@ function RestorePassword() {
 
   const formIsValid = email.length > 3;
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setEmail('');
+    try {
+      await sendEmail(email);
+      navigate(REDIRECT);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (

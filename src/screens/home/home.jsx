@@ -1,15 +1,16 @@
 import GameTitle from '../../components/game-title/game-title';
 import ScreenWrapper from '../../components/wrappers/screen-wrapper/screen-wrapper';
 import GameDataContext from '../../contexts/game-data-context';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import './home.scss';
 import PlayersOnlineTitle from '../../components/players-online-title/players-online-title';
 import AfterLogin from './AfterLogin';
 import BeforeLogin from './BeforeLogin';
+import useAuth from '../../hooks/useAuth';
 
 function Homepage() {
   const { leaveGame } = useContext(GameDataContext);
-  const [isLogin, setIsLogin] = useState(false);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     leaveGame();
@@ -19,11 +20,7 @@ function Homepage() {
     <ScreenWrapper>
       <GameTitle />
       <PlayersOnlineTitle />
-      {isLogin ? (
-        <AfterLogin setIsLogin={setIsLogin} />
-      ) : (
-        <BeforeLogin setIsLogin={setIsLogin} />
-      )}
+      {isLoggedIn ? <AfterLogin /> : <BeforeLogin />}
     </ScreenWrapper>
   );
 }

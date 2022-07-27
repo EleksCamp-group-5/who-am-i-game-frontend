@@ -5,10 +5,13 @@ import Input from '../../components/Input/Input';
 import InputPassword from '../../components/Input/InputPassword';
 import ScreenWrapper from '../../components/wrappers/screen-wrapper/screen-wrapper';
 import './profile-page.scss';
+import { updateUser } from '../../services/users-service';
+import useAuth from '../../hooks/useAuth';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('GreenDean');
+  const authCtx = useAuth();
+  const [username, setUsername] = useState(authCtx.username);
   const [password, setPassword] = useState('');
 
   const usernameHandler = (e) => {
@@ -19,8 +22,15 @@ export default function ProfilePage() {
     setPassword(e.target.value);
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
+    try {
+      await updateUser(username, authCtx.token, password);
+      authCtx.changeUserName(username);
+      alert('username and password changed');
+    } catch (error) {
+      alert(error);
+    }
     setUsername('');
     setPassword('');
   };

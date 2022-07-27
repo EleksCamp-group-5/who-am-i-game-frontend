@@ -7,9 +7,12 @@ import { RESTORE } from '../../constants/constants';
 import './signin-page.scss';
 import InputPassword from '../../components/Input/InputPassword';
 import { useState } from 'react';
+import { authorisationUser } from '../../services/users-service';
+import useAuth from '../../hooks/useAuth';
 
 function SignIn() {
   const navigate = useNavigate();
+  const authCtx = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -21,10 +24,16 @@ function SignIn() {
     setPassword(e.target.value);
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setEmail('');
-    setPassword('');
+    try {
+      const response = await authorisationUser(email, password);
+      authCtx.login(response.data.idToken);
+      authCtx.changeUserName(response.data.userName);
+      navigate('/');
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const formIsValid =
