@@ -1,5 +1,5 @@
 function checkGuess(guess) {
-  if (guess.length < 3 || guess.length > 128) {
+  if (guess.length < 1 || guess.length > 128) {
     return true;
   }
 
