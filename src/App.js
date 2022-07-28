@@ -3,7 +3,7 @@ import Homepage from './screens/home/home';
 import Loading from './screens/loading/loading';
 import PlayPage from './screens/play-page/play-page';
 import LostGame from './screens/lost-game/lost-game';
-import Victory from './screens/victory-screen/victroy-screen';
+import Victory from './screens/victory-screen/victory-screen';
 import InactivityKick from './screens/inactiviy-kick/inactivity-kick';
 import Lobby from './screens/lobby/lobby';
 import { AuthProvider } from './contexts/auth-provider-comtext';

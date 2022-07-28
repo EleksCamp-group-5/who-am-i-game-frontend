@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import Victory from './victroy-screen';
+import Victory from './victory-screen';
 
 describe('Victory', () => {
   const victory = (

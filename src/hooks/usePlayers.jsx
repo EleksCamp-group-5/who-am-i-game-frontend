@@ -29,7 +29,12 @@ export default function usePlayers() {
   useEffect(() => {
     sessionStorage.setItem('avatar', currentPlayer?.avatar);
     sessionStorage.setItem('name', currentPlayer?.nickname);
-  }, [currentPlayer?.avatar, currentPlayer?.nickname]);
+    sessionStorage.setItem('character', currentPlayer?.player.character);
+  }, [
+    currentPlayer?.avatar,
+    currentPlayer?.nickname,
+    currentPlayer?.player.character,
+  ]);
 
   return playersData;
 }
