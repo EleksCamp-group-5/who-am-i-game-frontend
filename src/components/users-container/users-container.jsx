@@ -9,10 +9,10 @@ function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
 
   const isAnswering = useMemo(
     () =>
-      playerTurn.enteredQuestion &&
-      !currentPlayer.enteredAnswer &&
+      playerTurn?.enteredQuestion &&
+      !currentPlayer?.enteredAnswer &&
       players.some((p) => !p.enteredAnswer),
-    [currentPlayer.enteredAnswer, playerTurn.enteredQuestion, players]
+    [currentPlayer?.enteredAnswer, playerTurn?.enteredQuestion, players]
   );
 
   return (
@@ -24,7 +24,7 @@ function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
           time={isAnswering ? 20 : 60}
           paused={modalActive}
           onFinish={onTimerFinish}
-          reset={playerTurn.enteredQuestion}
+          reset={playerTurn?.enteredQuestion}
         />
       </div>
       {currentPlayer && (
