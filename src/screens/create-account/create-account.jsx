@@ -13,6 +13,8 @@ function CreateAccount() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const usernameHandler = (e) => {
     setUsername(e.target.value);
@@ -34,17 +36,22 @@ function CreateAccount() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await registrationUser(username, email, password);
       navigate(SIGN_IN);
     } catch (error) {
-      alert(error);
+      if (error.response.data.details?.length) {
+        setError(error.response.data.details[0]);
+      }
     }
+    setLoading(false);
   };
 
   return (
     <ScreenWrapper>
       <GameTitle />
+      <p className="form-error">{error}</p>
       <form className="form-wrapper" onSubmit={submitHandler}>
         <Input
           type="text"
@@ -75,7 +82,7 @@ function CreateAccount() {
           >
             Cancel
           </Btn>
-          <Btn disabled={!formIsValid} type="submit">
+          <Btn disabled={loading || !formIsValid} type="submit">
             create account
           </Btn>
         </div>

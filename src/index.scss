@@ -67,6 +67,15 @@ h1 {
   padding-top: 32px;
 }
 
+.form-error {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  color: $btn-pink;
+  height: 29px;
+}
+
 .btn-form-wrapper {
   display: flex;
   gap: 32px;

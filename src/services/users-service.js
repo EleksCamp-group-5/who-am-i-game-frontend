@@ -3,12 +3,12 @@ import axios from 'axios';
 async function registrationUser(username, email, password) {
   return axios({
     method: 'post',
-    url: '/api/v1/users/registration',
+    url: '/api/v1/users',
     headers: {
       'Content-Type': 'application/json',
     },
     data: JSON.stringify({
-      username: username,
+      nickname: username,
       email: email,
       password: password,
       returnSecureToken: true,

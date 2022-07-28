@@ -34,7 +34,6 @@ function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
           name={currentPlayer.nickname}
           assignedCharacter="This is you"
           active={currentPlayer.id === playerTurn?.id}
-          playerStatusClassName={currentPlayer.character ? 'yes' : null}
         />
       )}
       <hr />
@@ -48,7 +47,6 @@ function UsersContainer({ currentPlayer, players, playerTurn, onTimerFinish }) {
                 avatarClassName={player.avatar}
                 assignedCharacter={player.character}
                 active={player.id === playerTurn?.id}
-                playerStatusClassName={currentPlayer.character ? 'yes' : null}
               />
             ))
           : null}
