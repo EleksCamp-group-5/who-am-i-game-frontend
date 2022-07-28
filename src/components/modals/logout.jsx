@@ -2,12 +2,9 @@ import './modal.scss';
 import Btn from '../btn/btn';
 import ModalWrapper from './modal-wrapper';
 import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 function LogoutModal({ active, onCancel }) {
   const { logout } = useAuth();
-
-  const navigate = useNavigate();
 
   if (!active) {
     return null;
