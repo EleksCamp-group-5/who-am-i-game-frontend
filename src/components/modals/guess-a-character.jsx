@@ -5,8 +5,14 @@ import checkGuess from '../../helper-functions/check-guess.js';
 import './modal.scss';
 import ModalWrapper from './modal-wrapper';
 
-function GuessCharacterModal({ active, onSubmit: onSubmitProp, onCancel }) {
+function GuessCharacterModal({
+  active,
+  onSubmit: onSubmitProp,
+  onCancel,
+  onTimerFinish: onTimerFinishProp,
+}) {
   const [guess, setGuess] = useState('');
+  const trimmedGuess = guess.trim();
 
   useEffect(() => {
     return () => setGuess('');
@@ -17,19 +23,21 @@ function GuessCharacterModal({ active, onSubmit: onSubmitProp, onCancel }) {
       event.preventDefault();
 
       if (onSubmitProp) {
-        onSubmitProp(guess);
+        onSubmitProp(trimmedGuess);
       }
     },
-    [onSubmitProp, guess]
+    [onSubmitProp, trimmedGuess]
   );
 
   const onTimerFinish = useCallback(() => {
-    const isValid = !checkGuess(guess);
+    const isValid = !checkGuess(trimmedGuess);
 
     if (onSubmitProp && isValid) {
-      onSubmitProp(guess);
+      onSubmitProp(trimmedGuess);
+    } else if (onTimerFinishProp) {
+      onTimerFinishProp();
     }
-  }, [onSubmitProp, guess]);
+  }, [trimmedGuess, onSubmitProp, onTimerFinishProp]);
 
   if (!active) {
     return null;
@@ -59,7 +67,7 @@ function GuessCharacterModal({ active, onSubmit: onSubmitProp, onCancel }) {
         />
         <Btn
           className="btn-yellow-solid"
-          disabled={checkGuess(guess)}
+          disabled={checkGuess(trimmedGuess)}
           type="submit"
         >
           I WANT TO GUESS

@@ -105,6 +105,7 @@ function PlayPage() {
                 active={active}
                 onSubmit={onSubmitGuess}
                 onCancel={() => setActive(false)}
+                onTimerFinish={onTimerFinish}
               />
             </ModalContext.Provider>
           </div>

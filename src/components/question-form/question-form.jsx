@@ -1,22 +1,28 @@
 import ModalContext from '../../contexts/modal-context';
 import Btn from '../btn/btn';
-import { useContext } from 'react';
+import { useContext, useState, useCallback } from 'react';
 import './question-form.scss';
-import { useCallback } from 'react';
 
 function QuestionForm({ disabled, onSubmit }) {
   const setModalActive = useContext(ModalContext)[1];
+  const [question, setQuestion] = useState('');
+  const trimmedQuestion = question.trim();
 
   const handleSubmit = useCallback(
     (event) => {
       event.preventDefault();
 
-      if (event.target.elements.question.value) {
-        onSubmit(event.target.elements.question.value);
+      if (trimmedQuestion) {
+        onSubmit(trimmedQuestion);
       }
     },
-    [onSubmit]
+    [onSubmit, trimmedQuestion]
   );
+
+  const formIsValid =
+    !!trimmedQuestion &&
+    trimmedQuestion.length > 1 &&
+    trimmedQuestion.length < 128;
 
   return (
     <div className="form">
@@ -27,8 +33,14 @@ function QuestionForm({ disabled, onSubmit }) {
           type="text"
           placeholder="Type your question"
           maxLength="256"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
         />
-        <button disabled={disabled} type="submit" className="btn btn_ask">
+        <button
+          disabled={disabled || !formIsValid}
+          type="submit"
+          className="btn btn_ask"
+        >
           Ask
         </button>
       </form>
