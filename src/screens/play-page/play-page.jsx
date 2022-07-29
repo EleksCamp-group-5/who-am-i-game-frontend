@@ -69,7 +69,9 @@ function PlayPage() {
     if (
       (currentPlayer?.playerState === ANSWERING ||
         currentPlayer?.playerState === ANSWER_GUESS) &&
-      (currentPlayer?.enteredAnswer || currentPlayer?.enteredQuestion)
+      (currentPlayer?.enteredAnswer ||
+        currentPlayer?.enteredQuestion ||
+        !playerTurn?.enteredQuestion)
     ) {
       return;
     }
@@ -81,6 +83,7 @@ function PlayPage() {
     currentPlayer?.playerState,
     playersWithoutCurrent,
     makePlayerInactive,
+    playerTurn?.enteredQuestion,
   ]);
 
   return (
