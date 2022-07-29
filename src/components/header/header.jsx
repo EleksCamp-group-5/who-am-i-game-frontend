@@ -77,6 +77,7 @@ function Header({ type, lobby, startGame }) {
           <LeaveGameModal
             active={leaveModalActive}
             onCancel={() => setLeaveModalActive(false)}
+            inGame
           />
         </>
       )}
